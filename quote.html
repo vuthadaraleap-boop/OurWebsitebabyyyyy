@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love Quotes 💌</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #ffe6eb, #fff0f5);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    header {
+      background: #4d82ff;
+      padding: 15px;
+      position: relative;
+      z-index: 10;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav ul li {
+      margin: 0 15px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: #ffe6eb;
+    }
+
+    nav ul li a.active {
+      text-decoration: underline;
+    }
+
+    section {
+      margin-top: 60px;
+      position: relative;
+      z-index: 5;
+    }
+
+    h2 {
+      color: #0063cc;
+      font-size: 32px;
+    }
+
+    button {
+      background: #4d9dff;
+      border: none;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0px 5px 15px rgba(255, 77, 109, 0.4);
+      transition: all 0.3s ease-in-out;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    #quote {
+      margin-top: 40px;
+      font-size: 24px;
+      font-style: italic;
+      min-height: 60px;
+      color: #1ac2ff;
+      text-shadow: 0 0 10px rgba(0, 217, 255, 0.6),
+                   0 0 20px rgba(0, 123, 255, 0.6);
+      animation: fadeIn 1s ease forwards;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      background: #333;
+      margin-left: 2px;
+      animation: blink 0.7s infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .heart {
+      position: fixed;
+      bottom: -10px;
+      color: #4dc7ff;
+      font-size: 20px;
+      animation: floatUp 5s linear infinite;
+      opacity: 0.8;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-800px) scale(1.5); opacity: 0; }
+    }
+
+    /* Touch Button style */
+    .touch-btn {
+      background: #66faff;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 30px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255,102,179,0.4);
+      transition: all 0.3s ease-in-out;
+      display: none; /* hidden by default */
+    }
+
+    .touch-btn:hover {
+      background: #00e6d3;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="flower.html">Flower</a></li>
+        <li><a href="ourstory.html">Our Story</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="quote.html" class="active">Quotes</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section>
+    <h2>Love Quotes</h2>
+    <button onclick="showQuote()">Show Next Quote</button>
+    <p id="quote"></p>
+
+    <!-- Touch Button -->
+    <button id="touchBtn" class="touch-btn" onclick="window.location.href='nextpage.html'">Touch the button</button>
+  </section>
+
+  <script>
+    const quotes = [
+      "1. Every love story is beautiful, but ours is my favorite. 💕",
+      "2. You are the best thing that ever happened to me. 🌹",
+      "3. In your smile, I see something more beautiful than the stars. ✨",
+      "4. I love you not because of who you are, but because of who I am when I am with you. 💑",
+      "5. Forever is not long enough when I’m with you. ❤️",
+      "6. In the end, I always love you more than I did in the beginning. Babyy Kagnchana 💘"
+    ];
+
+    let currentIndex = 0;
+    let typingTimeout;
+
+    function showQuote() {
+      clearTimeout(typingTimeout);
+      const text = quotes[currentIndex];
+      const quoteEl = document.getElementById("quote");
+      const touchBtn = document.getElementById("touchBtn");
+      quoteEl.innerHTML = "";
+      touchBtn.style.display = "none"; // hide button until typing ends
+      let i = 0;
+
+      function type() {
+        if (i < text.length) {
+          quoteEl.innerHTML += text.charAt(i);
+          i++;
+          typingTimeout = setTimeout(type, 50);
+        } else {
+          if (!quoteEl.querySelector(".cursor")) {
+            quoteEl.innerHTML += '<span class="cursor"></span>';
+          }
+          // show the touch button after typing ends
+          touchBtn.style.display = "inline-block";
+        }
+      }
+      type();
+
+      currentIndex = (currentIndex + 1) % quotes.length;
+    }
+
+    // Floating hearts generator
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerHTML = "💙";
+      document.body.appendChild(heart);
+
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.fontSize = Math.random() * 20 + 15 + "px";
+      heart.style.animationDuration = (Math.random() * 3 + 3) + "s";
+
+      setTimeout(() => {
+        heart.remove();
+      }, 5000);
+    }
+
+    setInterval(createHeart, 800);
+  </script>
+</body>
+</html>
