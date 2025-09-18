@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #08b0ce, #0080f8);
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #000;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #000;
+        }
+
+        /* Meme Image */
+        .pointing-img {
+            width: 200px;
+            max-width: 80%;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Enter Button */
+        .enter-button {
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            color: #000;
+            background: linear-gradient(45deg, #e7e3e4, #fff9f6);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .enter-button:hover {
+            transform: scale(1.1);
+            background: linear-gradient(45deg, #0f94c8, #07c1e2);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Our Relationship</h1>
+    <h2>Website!</h2>
+    <p>Babyy Kagnchana , if you want to see the website more click Enter</p>
+
+    <!-- Meme pointing finger image -->
+    <img src="https://media.tenor.com/fZf0sdW7QaUAAAAM/brunna-goncalves-xoxobru.gif" alt="Pointing Finger" class="pointing-img">
+    <a href="flower.html" class="enter-button">Enter ❤️</a>
+    <a href="ourstory.html"><button>Go Back Home</button></a>
+
+</body>
+</html>
