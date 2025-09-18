@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heart Particles</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #262626;
+      position: relative;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .love-text {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #66fff7;
+      font-size: 1.5rem;
+      font-family: "Arial", sans-serif;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.4;
+      animation: glow 2.5s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0% { opacity: 0.6; text-shadow: 0 0 5px #66fff7, 0 0 10px #66fff7, 0 0 20px #66fff7; }
+      50% { opacity: 1; text-shadow: 0 0 10px #66fff7, 0 0 20px #66fff7, 0 0 40px #66fff7, 0 0 60px #66fff7; }
+      100% { opacity: 0.6; text-shadow: 0 0 5px #66fff7, 0 0 10px #66fff7, 0 0 20px #66fff7; }
+    }
+
+    .back-button {
+      position: absolute;
+      bottom: 20px;
+      padding: 10px 20px;
+      background-color: #00bfff;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .back-button:hover {
+      background-color: #0095d1;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="pinkboard"></canvas>
+  <div class="love-text">
+    I Love you my Dear Kagnchana<br>
+  </div>
+
+  <!-- Back button -->
+  <a href="quote.html" class="back-button">Back</a>
+
+  <script>
+    var settings = {
+      particles: { length: 10000, duration: 4, velocity: 200, effect: -1.2, size: 7 }
+    };
+
+    (function() {
+      var b = 0;
+      var c = ["ms", "moz", "webkit", "o"];
+      for (var a = 0; a < c.length && !window.requestAnimationFrame; ++a) {
+        window.requestAnimationFrame = window[c[a] + "RequestAnimationFrame"];
+        window.cancelAnimationFrame =
+          window[c[a] + "CancelAnimationFrame"] ||
+          window[c[a] + "CancelRequestAnimationFrame"];
+      }
+      if (!window.requestAnimationFrame) {
+        window.requestAnimationFrame = function(h, e) {
+          var d = new Date().getTime();
+          var f = Math.max(0, 16 - (d - b));
+          var g = window.setTimeout(function() { h(d + f); }, f);
+          b = d + f; return g;
+        };
+      }
+      if (!window.cancelAnimationFrame) { window.cancelAnimationFrame = function(d) { clearTimeout(d); }; }
+    })();
+
+    var Point = (function() {
+      function Point(x, y) { this.x = x || 0; this.y = y || 0; }
+      Point.prototype.clone = function() { return new Point(this.x, this.y); };
+      Point.prototype.length = function(len) { if (len === undefined) { return Math.sqrt(this.x*this.x + this.y*this.y); } this.normalize(); this.x *= len; this.y *= len; return this; };
+      Point.prototype.normalize = function() { var len = this.length(); this.x /= len; this.y /= len; return this; };
+      return Point;
+    })();
+
+    var Particle = (function() {
+      function Particle() { this.position = new Point(); this.velocity = new Point(); this.acceleration = new Point(); this.age = 0; }
+      Particle.prototype.initialize = function(x, y, dx, dy) { this.position.x=x; this.position.y=y; this.velocity.x=dx; this.velocity.y=dy; this.acceleration.x=dx*settings.particles.effect; this.acceleration.y=dy*settings.particles.effect; this.age=0; };
+      Particle.prototype.update = function(dt) { this.position.x+=this.velocity.x*dt; this.position.y+=this.velocity.y*dt; this.velocity.x+=this.acceleration.x*dt; this.velocity.y+=this.acceleration.y*dt; this.age+=dt; };
+      Particle.prototype.draw = function(ctx, image) { function ease(t){return--t*t*t+1;} var size = image.width*ease(this.age/settings.particles.duration); ctx.globalAlpha=1-this.age/settings.particles.duration; ctx.drawImage(image,this.position.x-size/2,this.position.y-size/2,size,size); };
+      return Particle;
+    })();
+
+    var ParticlePool = (function() {
+      var particles, firstActive=0, firstFree=0, duration=settings.particles.duration;
+      function ParticlePool(length){ particles=new Array(length); for(var i=0;i<length;i++){particles[i]=new Particle();} }
+      ParticlePool.prototype.add=function(x,y,dx,dy){ particles[firstFree].initialize(x,y,dx,dy); firstFree++; if(firstFree==particles.length)firstFree=0; if(firstActive==firstFree)firstActive++; if(firstActive==particles.length)firstActive=0; };
+      ParticlePool.prototype.update=function(dt){ var i; if(firstActive<firstFree){ for(i=firstActive;i<firstFree;i++){particles[i].update(dt);} } if(firstFree<firstActive){ for(i=firstActive;i<particles.length;i++){particles[i].update(dt);} for(i=0;i<firstFree;i++){particles[i].update(dt);} } while(particles[firstActive].age>=duration && firstActive!=firstFree){ firstActive++; if(firstActive==particles.length)firstActive=0; } };
+      ParticlePool.prototype.draw=function(ctx,image){ if(firstActive<firstFree){for(var i=firstActive;i<firstFree;i++){particles[i].draw(ctx,image);} } if(firstFree<firstActive){for(var i=firstActive;i<particles.length;i++){particles[i].draw(ctx,image);} for(var i=0;i<firstFree;i++){particles[i].draw(ctx,image);} } };
+      return ParticlePool;
+    })();
+
+    (function(canvas){
+      var ctx=canvas.getContext("2d"), particles=new ParticlePool(settings.particles.length), rate=settings.particles.length/settings.particles.duration, time;
+      function pointOnHeart(t){ return new Point(180*Math.pow(Math.sin(t),3), 160*Math.cos(t)-50*Math.cos(2*t)-20*Math.cos(3*t)-10*Math.cos(4*t)+25); }
+      var image=(function(){
+        var c=document.createElement("canvas"), ctx=c.getContext("2d"); c.width=settings.particles.size; c.height=settings.particles.size;
+        function to(t){ var p=pointOnHeart(t); p.x=settings.particles.size/2+(p.x*settings.particles.size)/350; p.y=settings.particles.size/2-(p.y*settings.particles.size)/350; return p; }
+        ctx.beginPath(); var t=-Math.PI; var p=to(t); ctx.moveTo(p.x,p.y); while(t<Math.PI){ t+=0.01; p=to(t); ctx.lineTo(p.x,p.y); } ctx.closePath();
+        ctx.fillStyle="#00bfff"; // blue heart
+        ctx.fill(); var img=new Image(); img.src=c.toDataURL(); return img;
+      })();
+
+      function render(){
+        requestAnimationFrame(render);
+        var newTime=new Date().getTime()/1000, dt=newTime-(time||newTime); time=newTime; ctx.clearRect(0,0,canvas.width,canvas.height);
+        var amt=rate*dt; for(var i=0;i<amt;i++){ var pos=pointOnHeart(Math.PI-2*Math.PI*Math.random()); var dir=pos.clone().length(settings.particles.velocity); particles.add(canvas.width/2+pos.x,canvas.height/2-pos.y,dir.x,-dir.y);}
+        particles.update(dt); particles.draw(ctx,image);
+      }
+
+      function onResize(){ canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight; }
+      window.onresize=onResize;
+      setTimeout(function(){ onResize(); render(); },10);
+    })(document.getElementById("pinkboard"));
+  </script>
+</body>
+</html>
